@@ -122,6 +122,7 @@ class core_customfield_external extends external_api {
                             'nameeditable' => new external_value(PARAM_RAW, 'inplace editable name'),
                             'addfieldmenu' => new external_value(PARAM_RAW, 'addfieldmenu'),
                             'canedit' => new external_value(PARAM_BOOL, 'can edit'),
+                            'canmigrate' => new external_value(PARAM_BOOL, 'can migrate to shared category'),
                             'fields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(

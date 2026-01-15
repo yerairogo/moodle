@@ -25,6 +25,7 @@
 namespace core_customfield\output;
 
 use core_customfield\api;
+use core_customfield\customfield\shared_handler;
 use core_customfield\handler;
 use core_customfield\shared;
 use renderable;
@@ -120,6 +121,11 @@ class management implements renderable, templatable {
                     'label' => get_string('enableplugin', 'core_admin', $category->get_formatted_name()),
                     'labelclasses' => 'visually-hidden',
                 ]);
+            }
+
+            $sharedhandler = shared_handler::get_handler('core_customfield', 'shared');
+            if ($canedit && $sharedhandler->can_configure() && !$category->get('shared')) {
+                $categoryarray['canmigrate'] = true;
             }
 
             $categoryarray['fields'] = array();

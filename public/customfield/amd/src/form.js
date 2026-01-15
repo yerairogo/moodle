@@ -27,6 +27,10 @@ import {
     getString,
     getStrings,
 } from 'core/str';
+import {add as addToast} from 'core/toast';
+import {migrateCategory, reloadTemplate} from 'core_customfield/repository/form';
+import ModalSaveCancel from 'core/modal_save_cancel';
+import * as ModalEvents from 'core/modal_events';
 import ModalForm from 'core_form/modalform';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -70,6 +74,55 @@ const confirmDelete = (id, type, component, area, itemid) => {
     })
     .then(pendingPromise.resolve)
     .catch(Notification.exception);
+};
+
+const confirmMigrate = async(categoryId, component, area, itemid) => {
+    const pendingPromise = new Pending('core_customfield/form:confirmMigrate');
+
+    try {
+        const strings = await getStrings([
+            {'key': 'confirm'},
+            {'key': 'confirmmigratecategory', component: 'core_customfield'},
+            {'key': 'yes'},
+        ]);
+        const modal = await ModalSaveCancel.create({
+            title: strings[0],
+            body: strings[1],
+            buttons: {
+                save: strings[2],
+            },
+            show: true,
+            removeOnClose: true,
+        });
+
+        modal.getRoot().on(ModalEvents.save, async(event) => {
+            event.preventDefault();
+            try {
+                await migrateCategory(categoryId, component, area, itemid);
+                const response = await reloadTemplate(component, area, itemid);
+                const {html, js} = await Templates.renderForPromise('core_customfield/list', response);
+                const listPage = document.querySelector('[data-region="list-page"]');
+                if (listPage) {
+                    await Templates.replaceNode(listPage, html, js);
+                }
+                await modal.destroy();
+                const successmessage = await getString('categorymigrated', 'core_customfield');
+                await addToast(successmessage, {type: 'success'});
+                pendingPromise.resolve();
+            } catch (error) {
+                if (error.errorcode === 'sharedcustomfieldalreadyexists') {
+                    const title = await getString('migrationerror', 'core_customfield');
+                    await modal.destroy();
+                    await Notification.alert(title, error.message);
+                    pendingPromise.resolve();
+                } else {
+                    Notification.exception(error);
+                }
+            }
+        });
+    } catch (error) {
+        Notification.exception(error);
+    }
 };
 
 
@@ -305,6 +358,13 @@ export const init = () => {
             e.preventDefault();
 
             confirmDelete(roleHolder.dataset.id, 'category', component, area, itemid);
+            return;
+        }
+
+        if (roleHolder.dataset.role === 'migratecategory') {
+            e.preventDefault();
+
+            confirmMigrate(roleHolder.dataset.id, component, area, itemid);
             return;
         }
 

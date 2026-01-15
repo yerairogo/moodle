@@ -46,6 +46,7 @@
             "nameeditable": "Other fields",
             "addfieldmenu": "Add field",
             "canedit": true,
+            "canmigrate": true,
             "fields": [
                 { "id": 0, "name": "Field name", "shortname": "shortname", "type": "Text" },
                 { "id": 0, "name": "Another field", "shortname": "checkme", "type": "Checkbox" }
@@ -92,6 +93,11 @@
                             <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} deletecategory, customfield, {{name}} {{/str}}" aria-label="{{#str}} deletecategory, customfield, {{name}} {{/str}}">
                                 {{#pix}} t/delete, core {{/pix}}
                             </button>
+                            {{#canmigrate}}
+                                <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="migratecategory" data-id="{{id}}" title="{{#str}} migratecategory, customfield, {{name}} {{/str}}" aria-label="{{#str}} migratecategory, customfield, {{name}} {{/str}}">
+                                    {{#pix}} t/backpack, core {{/pix}}
+                                </button>
+                            {{/canmigrate}}
                         {{/canedit}}
                     </h3>
                     {{#toggle}}

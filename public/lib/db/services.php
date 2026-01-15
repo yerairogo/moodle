@@ -2918,6 +2918,13 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'core_customfield_migrate_category' => [
+        'classname'   => core_customfield\external\migrate_category::class,
+        'methodname'  => 'execute',
+        'description' => 'Migrate custom field category to shared custom fields',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_customfield_move_field'   => array(
         'classname'   => 'core_customfield_external',
         'methodname'  => 'move_field',
