@@ -52,6 +52,7 @@ export default class Component extends DndSection {
             RESTRICTIONS: 'restrictions',
             PAGEITEM: 'pageitem',
             OVERLAYBORDERS: 'overlay-preview-borders',
+            HASCMS: 'hascms',
         };
 
         // We need our id to watch specific events.
@@ -115,6 +116,7 @@ export default class Component extends DndSection {
         return [
             {watch: `section[${this.id}]:deleted`, handler: this.remove},
             {watch: `section[${this.id}]:updated`, handler: this._refreshSection},
+            {watch: `section[${this.id}].cmlist:updated`, handler: this._refreshCmlist},
             {watch: `course.pageItem:updated`, handler: this._refreshPageItem},
         ];
     }
@@ -145,6 +147,17 @@ export default class Component extends DndSection {
         this.locked = element.locked;
         // Update title.
         this.getElement(this.selectors.SECTION_TITLE).innerHTML = element.title;
+    }
+
+    /**
+     * Update the section when the cm list changes.
+     *
+     * @param {Object} param details the update details.
+     * @param {Object} param.element the section element
+     */
+    _refreshCmlist({element}) {
+        const sectionItem = this.getElement(this.selectors.SECTION_ITEM);
+        sectionItem.classList.toggle(this.classes.HASCMS, element.cmlist?.length > 0);
     }
 
     /**

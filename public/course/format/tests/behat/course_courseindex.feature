@@ -187,6 +187,21 @@ Feature: Course index depending on role
     And I should see "Section 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
 
+  @javascript
+  Scenario: Course index section updates hascms when activities are moved
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    # An empty section receives an activity and gains hascms.
+    And the "class" attribute of "#courseindex-content .courseindex-section[data-number='4'] [data-for='section_item']" "css_element" should not contain "hascms"
+    And the "class" attribute of "#courseindex-content .courseindex-section[data-number='2'] [data-for='section_item']" "css_element" should contain "hascms"
+    When I move "Activity sample 1" activity to section "4"
+    Then I should see "Activity sample 1" in the "courseindex-content" "region"
+    And the "class" attribute of "#courseindex-content .courseindex-section[data-number='4'] [data-for='section_item']" "css_element" should contain "hascms"
+    # A section loses its only activity and removes hascms.
+    When I move "Activity sample 2" activity to section "4"
+    Then I should see "Activity sample 2" in the "courseindex-content" "region"
+    And the "class" attribute of "#courseindex-content .courseindex-section[data-number='2'] [data-for='section_item']" "css_element" should not contain "hascms"
+
   @javascript @accessibility
   Scenario: Course index toggling all sections
     When I am on the "Course 1" course page logged in as teacher1
