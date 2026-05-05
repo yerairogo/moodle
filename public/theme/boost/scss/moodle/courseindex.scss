@@ -112,6 +112,11 @@ $courseindex-item-current: $primary !default;
             }
         }
 
+        &.courseindex-section-title:not(.hascms) > .courseindex-chevron {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
         @include courseindex-item-hover();
 
         @include courseindex-item-dragging();
